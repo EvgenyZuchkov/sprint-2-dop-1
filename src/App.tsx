@@ -15,30 +15,6 @@ export type TaskType2 = {
 }
 
 export const App = () => {
-    // let todolistID1 = v1();
-    // let todolistID2 = v1();
-    //
-    // let [todolists, setTodolists] = useState<Array<TodolistsType>>([
-    //     {id: todolistID1, title: 'What to learn', filter: 'all'}, //0
-    //      {id: todolistID2, title: 'What to buy', filter: 'all'},  //1
-    // ])
-    //
-    // let [tasks, setTasks] = useState({
-    //     [todolistID1]: [
-    //         {id: v1(), title: "HTML&CSS", isDone: true},
-    //         {id: v1(), title: "JS", isDone: true},
-    //         {id: v1(), title: "ReactJS", isDone: false},
-    //         {id: v1(), title: "Rest API", isDone: false},
-    //         {id: v1(), title: "GraphQL", isDone: false},
-    //     ],
-    //     [todolistID2]: [
-    //         {id: v1(), title: "HTML&CSS2", isDone: true},
-    //         {id: v1(), title: "JS2", isDone: true},
-    //         {id: v1(), title: "ReactJS2", isDone: false},
-    //         {id: v1(), title: "Rest API2", isDone: false},
-    //         {id: v1(), title: "GraphQL2", isDone: false},
-    //     ]
-    // });
 
     let todolistId1 = v1();
     let todolistId2 = v1();
@@ -67,15 +43,13 @@ export const App = () => {
 
 
     const removeTodolist = (todolistId: string) => {
-        // setTodolists(todolists.filter(el => el.id !== todolistId))
-        // delete tasks[todolistId]
-        // console.log(tasks)
         setTodolists(todolists.filter(td => td.id !== todolistId));
         delete tasks[todolistId];
     }
 
 
-    function removeTask(todolistId: string, taskId: string) {
+    function removeTask(payload: { todolistId: string, taskId: string }) {
+        const {todolistId, taskId} = payload;
         setTasks({
             ...tasks,
             [todolistId]: {
@@ -86,8 +60,10 @@ export const App = () => {
 
     }
 
-    function addTask(todolistId: string, title: string) {
-        let newTask = {id: v1(), title: title, isDone: false};
+    function addTask(payload: { todolistId: string, title: string }) {
+        const {todolistId, title} = payload
+
+        let newTask: TaskType = {id: v1(), title: title, isDone: false};
         setTasks({
             ...tasks,
             [todolistId]: {
@@ -97,7 +73,8 @@ export const App = () => {
         })
     }
 
-    function changeStatus(todolistId: string, taskId: string, newIsDone: boolean) {
+    function changeStatus(payload: { todolistId: string, taskId: string, newIsDone: boolean }) {
+        const {todolistId, taskId, newIsDone} = payload
         setTasks({
             ...tasks,
             [todolistId]: {
@@ -107,8 +84,8 @@ export const App = () => {
         })
     }
 
-    function changeFilter(todolistId: string, value: FilterValuesType) {
-        // setTodolists(todolists.map(el => el.id === todolistId ? {...el, filter: value} : el))
+    function changeFilter(payload: { todolistId: string, value: FilterValuesType }) {
+        const {todolistId, value} = payload
         setTasks({
             ...tasks,
             [todolistId]: {
@@ -122,20 +99,13 @@ export const App = () => {
         <div className="App">
             {todolists.map((el) => {
 
-                let tasksForTodolist = tasks[el.id].data;
-                if (tasks[el.id].filter === "active") {
-                    tasksForTodolist = tasks[el.id].data.filter(t => !t.isDone);
-                }
-                if (tasks[el.id].filter === "completed") {
-                    tasksForTodolist = tasks[el.id].data.filter(t => t.isDone);
-                }
-
                 return (
                     <Todolist
                         key={el.id}
                         todolistId={el.id}
                         title={el.title}
-                        tasks={tasksForTodolist}
+                        // tasks={tasksForTodolist}
+                        tasks={tasks[el.id].data}
                         removeTask={removeTask}
                         changeFilter={changeFilter}
                         addTask={addTask}
@@ -145,8 +115,6 @@ export const App = () => {
                     />
                 )
             })}
-
-
         </div>
     );
 }
